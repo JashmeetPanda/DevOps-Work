@@ -3,11 +3,28 @@ name: CI Pipeline
 on: [push]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set Up Docker Build
-        run: docker build -t my-html-site .
+      # Step 2: List Files
+      # Ensure the `index.html` and `Dockerfile` are present
+      - name: List Files
+        run: ls -la
+
+      # Step 3: Build Docker Image
+      - name: Build Docker Image
+        run: docker build -t my-nginx-site .
+
+      # Step 4: Run Docker Container
+      # Test if the container starts successfully
+      - name: Run Docker Container
+        run: docker run -d -p 8080:80 my-nginx-site
+
+      # Step 5: Test the Server Response
+      # Use curl to verify that the site is running
+      - name: Test Server
+        run: curl -I http://localhost:8080
